@@ -61,7 +61,8 @@ public class GameManager : Singleton<GameManager> {
 		_buttonsPool = new ObjectPool(5, _buttonPrefab);
 		_activeNotes = new List<NoteButton> ();
 
-		_currentPoints = _maxPoints / 2;
+        //_currentPoints = _maxPoints / 2;
+        _currentPoints = 0;
 	}
 
 	void Start()
@@ -87,6 +88,8 @@ public class GameManager : Singleton<GameManager> {
 
             Debug.Log("FAIL :(");
             _currentPoints -= _failPoints;
+            if (_currentPoints < 0)
+                _currentPoints = 0;
         }
 		
 	}
@@ -98,12 +101,15 @@ public class GameManager : Singleton<GameManager> {
 			if (((ButtonDownEvent)e).ButtonType == _activeNotes [0].Type && _activeNotes [0].CanHit) {
 				if (_activeNotes [0].Distance < 0.1) {
 					Debug.Log ("PERFECT!!");
-					_currentPoints += _perfectPoints;
+                    _activeNotes[0].PerfectHit();
+                    _currentPoints += _perfectPoints;
 				} else if (_activeNotes [0].Distance < 0.25) {
 					Debug.Log ("GREAT!!");
+                    _activeNotes[0].GreatHit();
 					_currentPoints += _greatPoints;
 				} else {
 					Debug.Log ("GOOD!!");
+                    _activeNotes[0].GoodHit();
 					_currentPoints += _goodPoints;
 				}
 

@@ -45,6 +45,13 @@ public class NoteButton : MonoBehaviour {
 		get { return Vector3.Distance (transform.position, _goalPosition); }
 	}
 
+    [SerializeField]
+    private GameObject _goodLabel;
+    [SerializeField]
+    private GameObject _greatLabel;
+    [SerializeField]
+    private GameObject _perfectLabel;
+
     private void Awake()
     {
         _anim = GetComponent<Animator>();
@@ -83,6 +90,7 @@ public class NoteButton : MonoBehaviour {
         _label.sprite = label;
         _label.gameObject.transform.localScale = new Vector2(1.0f, 1.0f);
         _label.enabled = true;
+        _anim = GetComponent<Animator>();
         _anim.SetBool("active", false);
         _anim.SetBool("end", false);
 
@@ -108,7 +116,21 @@ public class NoteButton : MonoBehaviour {
         EventManager.Instance.OnEvent(this, new EndNoteEvent(gameObject, true));
     }
 
- 
+    public void GoodHit()
+    {
+        _goodLabel.SetActive(true);
+    }
+
+
+    public void GreatHit()
+    {
+        _greatLabel.SetActive(true);
+    }
+
+    public void PerfectHit()
+    {
+        _perfectLabel.SetActive(true);
+    }
 
 	void OnTriggerEnter2D(Collider2D other)
 	{

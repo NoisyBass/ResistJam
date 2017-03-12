@@ -18,7 +18,8 @@ public class InputManager : Singleton<InputManager> {
 		base.Awake ();
 
 		_buttonDownEvent = new ButtonDownEvent ();
-	}
+        _controller = Input.GetJoystickNames().Length != 0 && Input.GetJoystickNames()[0] != string.Empty;
+    }
 
 	void Update () {
 

@@ -35,11 +35,13 @@ public class Citizen : MonoBehaviour {
 	private EndCitizenEvent _endCitizenEvent;
 
 	private SpriteRenderer _sprite;
+    private Animator _anim;
 
 	void Awake()
 	{
 		_endCitizenEvent = new EndCitizenEvent ();
 		_sprite = GetComponent<SpriteRenderer> ();
+        _anim = GetComponent<Animator>();
 	}
 
 	void OnEnable()
@@ -60,11 +62,24 @@ public class Citizen : MonoBehaviour {
 
 		_speed = speed;
 		_standingTime = standingTime;
-		if (direction == CitizenDirection.LEFT)
-			_direction = Vector3.left;
-		else
-			_direction = Vector3.right;
-		_row = row;
+        Vector3 newScale = transform.localScale;
+        if (direction == CitizenDirection.LEFT)
+        {
+            _direction = Vector3.left;
+            newScale.x = -0.85f;
+        }
+        else
+        {
+            _direction = Vector3.right;
+            newScale.x = 0.85f;
+        }
+        transform.localScale = newScale;
+        _row = row;
+
+        _anim = GetComponent<Animator>();
+        _anim.SetBool("stand", false);
+        _anim.SetBool("happy", false);
+        _anim.SetBool("sad", false);
 	}
 
 	void Update()
@@ -104,19 +119,26 @@ public class Citizen : MonoBehaviour {
 
 	private void Stand()
 	{
-        Debug.Log(GameManager.Instance.PointsProgress);
-		if (UnityEngine.Random.Range (0.0f, 1.0f) < GameManager.Instance.PointsProgress) {
-			EventManager.Instance.OnEvent (this, new GameEvent(GameEvent.GameEventType.CITIZEN_HAPPY));
-		}
-
+        _anim.SetBool("stand", true);
 		StartCoroutine (StandWaiting ());
-
 	}
 
 	private IEnumerator StandWaiting()
 	{
 		yield return new WaitForSeconds (_standingTime);
-		_standEnded = true;
+
+        if (UnityEngine.Random.Range(0.0f, 1.0f) < GameManager.Instance.PointsProgress)
+        {
+            _anim.SetBool("stand", false);
+            _anim.SetBool("happy", true);
+            EventManager.Instance.OnEvent(this, new GameEvent(GameEvent.GameEventType.CITIZEN_HAPPY));
+        }
+        else
+        {
+            _anim.SetBool("stand", false);
+            _anim.SetBool("sad", true);
+        }
+        _standEnded = true;
 	}
 
 	private void WalkOut()
